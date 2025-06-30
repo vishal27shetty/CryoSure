@@ -309,33 +309,6 @@ The simulator randomly generates anomalies:
 - **Low Temperature**: -5°C - 1°C  
 - **High Humidity**: 88% - 99%
 
-## 🏗️ Architecture Diagram
-
-![CryoSure Architecture](architecture-diagram.png)
-
-*Note: Architecture diagram image will be added to the repository*
-
-## 🏆 Judging Criteria Alignment
-
-### Quality of the Idea (⭐⭐⭐⭐⭐)
-- **Real-world Problem**: Addresses critical cold chain logistics challenges
-- **Business Value**: Prevents spoilage, ensures compliance, reduces costs
-- **Innovation**: Dynamic thresholding, real-time processing, serverless approach
-- **Practical Impact**: Immediate deployment potential in logistics industry
-
-### Architecture & Design (⭐⭐⭐⭐⭐)
-- **Serverless Excellence**: 100% AWS managed services
-- **Lambda Integration**: Core compute for all business logic
-- **Event-Driven**: Real-time IoT processing
-- **Scalability**: Auto-scaling from single to enterprise scale
-- **Best Practices**: Separation of concerns, IAM security, cost optimization
-
-### Completeness (⭐⭐⭐⭐⭐)
-- **End-to-End Solution**: Device → Processing → Storage → Alerts → UI
-- **Working Demo**: Fully functional with IoT simulator
-- **Documentation**: Comprehensive setup and API documentation
-- **Video Demonstration**: Complete walkthrough of functionality
-
 ## 🔮 Future Enhancements
 
 ### Phase 2 Features
