@@ -17,8 +17,7 @@
 - [AWS Lambda as Core Service](#aws-lambda-as-core-service)
 - [Features](#features)
 - [AWS Services Used](#aws-services-used)
-- [Quick Start](#quick-start)
-- [Detailed Setup Guide](#detailed-setup-guide)
+- [Setup Guide](#setup-guide)
 - [API Documentation](#api-documentation)
 - [Testing & Demo](#testing--demo)
 - [Architecture Diagram](#architecture-diagram)
@@ -60,7 +59,7 @@ CryoSure follows a fully serverless architecture designed for high availability,
 ┌─────────────────────────────────────────────────────────────────┐
 │                        Frontend Layer                          │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │              React.js SPA (Hosted on S3)               │   │
+│  │              React.js SPA (Frontend)                   │   │
 │  │  • Configuration Interface                              │   │
 │  │  • Real-time Monitoring Dashboard                      │   │
 │  │  • Anomaly Visualization                               │   │
@@ -176,7 +175,7 @@ AWS Lambda is central to every piece of business logic in CryoSure:
 | **Amazon DynamoDB** | Data persistence | Sensor data & configuration storage |
 | **Amazon SNS** | Notifications | Alert distribution |
 | **Amazon API Gateway** | REST APIs | Frontend-backend communication |
-| **Amazon S3** | Static hosting | React.js frontend deployment |
+
 | **Amazon CloudWatch** | Logging & monitoring | Centralized observability |
 
 ### Service Configuration Details
@@ -199,44 +198,9 @@ AWS Lambda is central to every piece of business logic in CryoSure:
 - **Capacity**: On-demand (auto-scaling)
 - **Consistency**: Eventually consistent reads
 
-## ⚡ Quick Start
+## 📖 Setup Guide
 
-### Prerequisites
-- AWS Account with appropriate permissions
-- Python 3.9+ installed
-- Node.js 16+ installed
-- Git installed
-
-### 1. Clone Repository
-```bash
-git clone https://github.com/yourusername/cryosure.git
-cd cryosure
-```
-
-### 2. Deploy Backend (AWS)
-```bash
-# Follow detailed setup guide in SETUP.md
-# or use the automated deployment script
-./deploy.sh
-```
-
-### 3. Deploy Frontend
-```bash
-cd client
-npm install
-npm run build
-# Upload dist/ to S3 bucket
-```
-
-### 4. Run IoT Simulator
-```bash
-cd Server
-python simulate_cryosure_sensor.py
-```
-
-## 📖 Detailed Setup Guide
-
-For complete setup instructions, see [SETUP.md](./SETUP.md)
+For complete setup and deployment instructions, see [SETUP.md](./SETUP.md)
 
 ## 📚 API Documentation
 
@@ -361,22 +325,13 @@ The simulator randomly generates anomalies:
 - **Amazon ElastiCache**: Real-time caching layer
 - **AWS Step Functions**: Complex workflow orchestration
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 📞 Support
 
-- **Email**: support@cryosure.com
-- **Documentation**: [docs.cryosure.com](https://docs.cryosure.com)
+- **Email**: vishal27shetty@gmail.com
 - **Issues**: [GitHub Issues](https://github.com/yourusername/cryosure/issues)
 
 ---
