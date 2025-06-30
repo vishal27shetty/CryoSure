@@ -464,6 +464,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ for the AWS Lambda Hackathon**
-
 *CryoSure - Ensuring the integrity of your cold chain, one sensor at a time.*
