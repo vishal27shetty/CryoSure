@@ -63,7 +63,7 @@ except Exception as e:
 
 try:
     while True:
-        timestamp = int(datetime.utcnow().timestamp())
+        timestamp = int(datetime.now().timestamp())
         is_anomaly = random.random() < ANOMALY_PROBABILITY
         temperature = None
         humidity = None

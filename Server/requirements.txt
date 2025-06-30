@@ -1,7 +1,7 @@
 # CryoSure Sensor Simulation Dependencies
 
 # AWS IoT Python SDK for MQTT communication
-AWSIoTPythonSDK==1.4.12
+AWSIoTPythonSDK
 
 # Python dotenv for environment variable management
-python-dotenv==1.0.0
+python-dotenv
