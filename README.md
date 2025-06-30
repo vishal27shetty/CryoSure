@@ -1,4 +1,4 @@
-# CryoSure: Real-time Cold Chain Anomaly Detection
+# CryoSure: Intelligent Cold Storage Monitoring
 
 [![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange?logo=amazon-aws)](https://aws.amazon.com/lambda/)
 [![Serverless](https://img.shields.io/badge/Architecture-Serverless-blue)](https://aws.amazon.com/serverless/)
