@@ -119,33 +119,61 @@ CryoSure follows a fully serverless architecture designed for high availability,
 
 ## ⚡ AWS Lambda as Core Service
 
-AWS Lambda is central to every piece of business logic in CryoSure:
+AWS Lambda is the serverless compute backbone of the CryoSure application. It executes all backend business logic without requiring any server management. The entire workflow, from real-time data ingestion and analysis to user-driven configuration and data presentation, is orchestrated by a set of targeted, event-driven Lambda functions.
 
-### 1. Event-Driven Anomaly Detection
-**Function**: `CryosureAnomalyDetector`
-- **Trigger**: AWS IoT Core Rule (`coldchain/sensors/data` MQTT topic)
-- **Purpose**: Real-time processing of sensor data streams
-- **Integration**: DynamoDB (read config, write data), SNS (send alerts)
+### How AWS Lambda is Used: A Deep Dive
 
-### 2. API-Driven Configuration
-**Function**: `UpdateColdStorageConfigLambda`
-- **Trigger**: API Gateway REST endpoint (`POST /config`)
-- **Purpose**: Dynamic threshold updates from frontend
-- **Integration**: DynamoDB (update configuration)
+CryoSure's architecture showcases three distinct and powerful patterns of Lambda usage, each triggered differently to handle a specific part of the application's functionality.
 
-### 3. API-Driven Data Retrieval
-**Function**: `GetSensorDataLambda`
-- **Trigger**: API Gateway REST endpoint (`GET /sensordata`)
-- **Purpose**: Serve data queries from web application
-- **Integration**: DynamoDB (read sensor data)
+#### 1. `CryosureAnomalyDetector`: The Real-time Analysis Engine
 
-### Lambda Function Details
+This is the most critical function in the system, acting as the real-time brain that processes every sensor reading.
 
-| Function | Runtime | Memory | Timeout | Triggers | Purpose |
-|----------|---------|--------|---------|----------|---------|
-| `CryosureAnomalyDetector` | Python 3.9 | 256 MB | 30s | IoT Core Rule | Anomaly detection & alerting |
-| `UpdateColdStorageConfigLambda` | Python 3.9 | 128 MB | 10s | API Gateway | Configuration management |
-| `GetSensorDataLambda` | Python 3.9 | 128 MB | 10s | API Gateway | Data retrieval |
+*   **Trigger**: **AWS IoT Core Rule**. This function is invoked asynchronously every time a new message is published to the `coldchain/sensors/data` MQTT topic. This event-driven pattern ensures immediate processing with zero idle cost.
+
+*   **In-depth Logic & Data Flow**:
+    1.  **Dynamic Configuration Loading**: Upon invocation, the function first queries the `CryosureColdStorageConfig` DynamoDB table for the single item with the partition key `CURRENT_ACTIVE_THRESHOLDS`. This allows the anomaly detection logic to use the *very latest* thresholds set by the user via the frontend, making the system highly adaptable without requiring a code deployment. If no configuration is found, it falls back to safe, hardcoded defaults.
+    2.  **Real-time Analysis**: It compares the incoming `temperature` and `humidity` values from the IoT payload against the dynamically loaded `minTemp`, `maxTemp`, and `maxHumidity` thresholds.
+    3.  **Data Enrichment & Persistence**: The function enriches the raw sensor data with crucial metadata: `isAnomaly` (a boolean flag) and `anomalyDetails` (a list of human-readable reasons for the anomaly). This enriched record is then immediately saved to the `ColdChainSensorData` DynamoDB table, creating an immutable historical log.
+    4.  **Instant Alerting**: If `isAnomaly` is true, the function constructs a detailed, formatted alert message and publishes it directly to the `CryosureAnomalyAlerts` Amazon SNS topic. This triggers immediate email/SMS notifications to stakeholders, enabling rapid response to critical events.
+
+#### 2. `UpdateColdStorageConfigLambda`: The System's Control Plane
+
+This function provides the crucial link between the user and the system's operational parameters, acting as a secure and controlled "control plane."
+
+*   **Trigger**: **Amazon API Gateway (`POST /config`)**. This function is invoked synchronously when the user saves a new configuration from the React frontend.
+
+*   **In-depth Logic & Data Flow**:
+    1.  **API-Driven Interaction**: It receives the new threshold values (`storageType`, `minTemp`, `maxTemp`, `maxHumidity`) directly from the API Gateway event body.
+    2.  **Singleton Configuration Pattern**: A key design choice is implemented here. The function uses `put_item` with a **fixed partition key** (`CURRENT_ACTIVE_THRESHOLDS`) on the `CryosureColdStorageConfig` table. This elegant pattern ensures that there is only ever **one** official, active configuration item for the entire system, which the `CryosureAnomalyDetector` function reads from. This is a robust way to manage global application state.
+    3.  **Data Validation**: It performs basic validation to ensure all required fields are present in the payload from the frontend.
+
+#### 3. `GetSensorDataLambda`: The Frontend's Data Provider
+
+This function serves as the backend-for-frontend (BFF), responsible for fetching and formatting data for the live monitoring dashboard.
+
+*   **Trigger**: **Amazon API Gateway (`GET /sensordata`)**. This function is invoked synchronously whenever the frontend dashboard requests a data refresh.
+
+*   **In-depth Logic & Data Flow**:
+    1.  **Data Retrieval**: It performs a `scan` operation on the `ColdChainSensorData` DynamoDB table to retrieve the most recent sensor readings (limited to 20 for performance).
+    2.  **In-Memory Sorting**: To ensure the frontend displays the very latest data first, the function sorts the retrieved items in reverse chronological order based on their `timestamp`.
+    3.  **Data Type Serialization**: A common challenge with DynamoDB is that it stores numbers as a high-precision `Decimal` type, which is not native to JSON. The function uses a helper class, `DecimalEncoder`, to correctly serialize these values into standard floats, preventing errors and ensuring frontend compatibility.
+    4.  **CORS Handling**: It explicitly includes `Access-Control-Allow-Origin: *` and other necessary CORS headers in its response, making it accessible to the web application hosted on a different domain.
+
+### 🔧 Lambda Function Specifications
+
+| Function                      | Runtime    | Memory | Timeout | Triggers        | Purpose                        |
+| ----------------------------- | ---------- | ------ | ------- | --------------- | ------------------------------ |
+| `CryosureAnomalyDetector`       | Python 3.9 | 256 MB | 30s     | IoT Core Rule   | Anomaly detection & alerting   |
+| `UpdateColdStorageConfigLambda` | Python 3.9 | 128 MB | 10s     | API Gateway     | Configuration management       |
+| `GetSensorDataLambda`         | Python 3.9 | 128 MB | 10s     | API Gateway     | Data retrieval for frontend    |
+
+### 🚀 Lambda Benefits Demonstrated
+- **Zero Infrastructure Management**: No servers to provision or maintain.
+- **Automatic Scaling**: Handles traffic spikes from a few sensors to millions without intervention.
+- **Pay-Per-Use Model**: Costs are incurred only when data is being processed.
+- **Event-Driven Architecture**: Functions respond instantly to IoT events and API calls.
+- **Seamless Integration**: Each function acts as "glue" between other AWS services (IoT, DynamoDB, SNS, API Gateway).
 
 ## 🚀 Features
 
