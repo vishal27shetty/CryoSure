@@ -1,11 +1,9 @@
-# CryoSure: Real-time Cold Chain Anomaly Detection
+# CryoSure: : Intelligent Cold Storage Monitoring
 
 [![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange?logo=amazon-aws)](https://aws.amazon.com/lambda/)
 [![Serverless](https://img.shields.io/badge/Architecture-Serverless-blue)](https://aws.amazon.com/serverless/)
 [![React](https://img.shields.io/badge/Frontend-React-61dafb?logo=react)](https://reactjs.org/)
 [![Python](https://img.shields.io/badge/Backend-Python-3776ab?logo=python)](https://python.org/)
-
-## 🏆 AWS Lambda Hackathon Submission
 
 **CryoSure** is a serverless, real-time cold chain monitoring solution built entirely on AWS Lambda and integrated services. It addresses the critical business problem of maintaining optimal environmental conditions for perishable goods during storage and transit.
 
